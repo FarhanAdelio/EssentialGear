@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+
+
 
 # Create your views here.
 def show_main(request):
@@ -9,3 +12,8 @@ def show_main(request):
     }
 
     return render(request, "main.html", context)
+
+def index(request):
+
+    return HttpResponse("Try Unit Test!")
+

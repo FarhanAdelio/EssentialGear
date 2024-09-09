@@ -1,26 +1,16 @@
 from django.test import TestCase, Client
-from django.utils import timezone
-from .models import MoodEntry
+class BonusTddTest(TestCase):
 
-class mainTest(TestCase):
-    def test_main_url_is_exist(self):
-        response = Client().get('')
-        self.assertEqual(response.status_code, 200)
+    def test_bonus_tdd_url_is_exist(self):
 
-    def test_main_using_main_template(self):
-        response = Client().get('')
-        self.assertTemplateUsed(response, 'main.html')
+        response = Client().get('/bonus_tdd')
 
-    def test_nonexistent_page(self):
-        response = Client().get('/skibidi/')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code,200)
 
-    def test_strong_mood_user(self):
-        now = timezone.now()
-        mood = MoodEntry.objects.create(
-          mood="LUMAYAN SENANG",
-          time = now,
-          feelings = "senang sih, cuman tadi baju aku basah kena hujan :(",
-          mood_intensity = 8,
-        )
-        self.assertTrue(mood.is_mood_strong)
+    def test_bonus_tdd_page_content(self):
+
+        response = Client().get('/bonus_tdd')
+
+        html_response = response.content.decode('utf8')
+
+        self.assertIn('Try Unit Test!', html_response)
