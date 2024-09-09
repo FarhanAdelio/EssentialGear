@@ -14,3 +14,5 @@ class BonusTddTest(TestCase):
         html_response = response.content.decode('utf8')
 
         self.assertIn('Try Unit Test!', html_response)
+
+        #test
