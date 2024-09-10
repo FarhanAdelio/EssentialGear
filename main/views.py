@@ -1,9 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
-
-
-# Create your views here.
 def show_main(request):
     context = {
         'npm' : '2306240162',
@@ -12,6 +8,3 @@ def show_main(request):
     }
 
     return render(request, "main.html", context)
-
-
-

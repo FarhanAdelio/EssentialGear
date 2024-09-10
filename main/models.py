@@ -5,3 +5,5 @@ class MoodEntry(models.Model):
     name = models.CharField(max_length=255)
     price = models.IntegerField()
     description = models.TextField(max_length=300)
+    stock = models.IntegerField()
+    rating = models.IntegerField()
