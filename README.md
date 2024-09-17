@@ -114,15 +114,3 @@ setelah itu saya menjalankan command yang diberikan pada web pws
 
 10. Mengapa model pada Django disebut sebagai ORM? 
 - Karena Django menggunakan objek dalam Python untuk melakukan interaksi dengan database. Object Relational Mapper (ORM) pada Django merupakan library code yang berguna untuk otomatisasi data transfer yang disimpan pada relational database tables menjadi objek yang mudah diimplementasi dalam Python.
-
-
-
-
-
-
-
-
-
-
-
-
