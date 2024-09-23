@@ -2,17 +2,17 @@
 {% block content %}
 <h1>Add New Gear Entry</h1>
 
-<form method="POST">
-  {% csrf_token %}
-  <table>
-    {{ form.as_table }}
-    <tr>
+    <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
       <td></td>
       <td>
         <input type="submit" value="Add Gear Entry" />
       </td>
-    </tr>
-  </table>
-</form>
+      </tr>
+    </table>
+    </form>
 
 {% endblock %}

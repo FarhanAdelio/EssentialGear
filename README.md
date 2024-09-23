@@ -189,3 +189,45 @@ Tidak adanya csrf_token sering dimanfaatkan oleh penyerang. Karena bisa saja ada
 
 - ## JSON ID:
 ![Screenshot 2024-09-17 at 23 55 40](https://github.com/user-attachments/assets/817f9b40-f14a-483b-8c43-7e751cc71431)
+
+## Tugas 4 PBP Farhan Adelio Prayata 2306240162
+
+## 1. Apa perbedaan antara HttpResponseRedirect() dan redirect()
+- HttpResponseRedirect() hanya mengambil single argumen yaitu URL. Sedangkan redirect() pada akhirnya akan return HttpResponseRedirect, dan dapat menerima model, view, URL sebagai argumen "to".
+
+- Redirect sedikit lebih fleksibel dalam hal ke mana ia bisa "redirect" user.
+
+
+## 2. Jelaskan cara kerja penghubungan model Product dengan User!
+
+- Adanya ForeignKey. ForeignKey ini akan kita taruh di potongan kode pada model kita sehingga akan menghubungan model Product dengan User. Selain itu, kode akan dilengkapi dengan on_delete=models.CASCADE yang artinya dalah jika User dihapus, maka semua produk yang dimiliki pengguna itu juga akan dihapus. Adanya ForeignKey ini dapat menghubungkan setiap produk ke satu user dan satu pengguna bisa memiliki banyak produk (hubungan many-to-one)
+
+- Menetapkan user yang membuat entri produk baru dengan mengisi field user di model Product dengan pengguna yang sedang login. Hal ini dilakukan dengan modifikasi fungsi create_product_entry. user yang sedang log in bisa membuat entry baru dengan form yang sudah dibuat. Adanya commit=False akan menambahkan informasi user sebelum objek disimpan ke database. Hal ini dilakukan agar kita bisa memodifikasi objek terlebih dahulu sebelum disimpan ke database.
+
+- Pada fungsi show_main akan akan ada product_entries = Product.objects.filter(user=request.user), potongan kode ini berfungsi untuk menampilkan objek pada Product yang berhubungan dengan user yang sedang logged in.
+
+## 3. Apa perbedaan antara authentication dan authorization, apakah yang dilakukan saat pengguna login? Jelaskan bagaimana Django mengimplementasikan kedua konsep tersebut.
+
+- Authentication akan memverifikasi bahwa pengguna adalah benar - benar siapa yang yang di klaim. Authentication umumnya memasukkan informasi kredensial seperti username dan password. Sedangkan authorization menentukan apa yang diizinkan untuk dilakukan oleh pengguna yang telah di authenticate.<br>
+Django mengimplementasikan konsep authentication dengan cara menggunakan sistem built-in untuk login, logout, dan register. DJango akan memverifikasi kredensial (username dan password) dan membandingkannya dengan data yang ada di database. Apabila cocok, user akan diberikan session ID untuk melacak status login mereka.<br>
+Setelah itu, pada proses authorization, Django akan menentukan apa yang dapat dilakukan oleh user tersebut berdasarkan dengan izin yang sudah ditetapkan diawal, contohnya @login_required
+
+## 4. Bagaimana Django mengingat pengguna yang telah login? Jelaskan kegunaan lain dari cookies dan apakah semua cookies aman digunakan?
+
+- Django mengingat pengguna yang telah login dengan Session ID yang disimpan sebagai cookie. Session merupakan suatu token yang mengenali session unik pada aplikasi web tertentu. Session ID yang disimpan di cookies akan dihubungkan dengan data session yang disimpan di server. Akan selalu request dan setiap request berikutnya yang dilakukan oleh pengguna, cookies akan dikirim bersama request http. Django akan memerika cookies untuk mendapatkan session ID kemudian mencari data session di server. Apabila session ID valid dan sesuai dengan data di server, Django akan tahu bahwa pengguna tersebut masih autheticated.<br>
+Beberapa kegunaan lain dari cookies adalah cookies menyimpan preferesni pengguna seperti bahasa pilihan, tema pilihan, dan lain - lain. Selain itu, cookies juga bisa digunakan untuk melacak aktivitas pengguna sehingga bisa dimanfaatkan untuk analitik dan pengelolaan iklan.<br>
+Namun, tidak semua cookies aman digunakan. Cookies yang kurang aman digunakan diantaranay adalah third-party cookies dan cookies yang tidak dienkripsi dan dikirimkan melalui koneksi http. Ada beberapa cookie yang biasanya dimanfaatkan sehingga seorang hacker bisa impersonate cookie sehingga mereka bisa akses akun user karena cookies tidak menyimpen password. Kejadian ini juga bisa mengarahkan kita kepada beberapa masalahh siber lainnya seperti cross-site scripting dan cross site request forgery.
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+- Membuat fungsi dan form registrasi dengan memodifikasi ``views.py`` dan import formulir bawaan dalam aplikasi web. Kemudian menambahkan fungsi ``register``.
+
+- Membuat berkas ``register.html`` untuk menampilkan laman register dan menambahkan path url di ``urlpatterns``
+
+- Setelah itu, saya lanjut membuat fungsi login dengan proses yang sama yaitu import fungsi bawaan django yaitu import ``authenticate``, ``login``, dan ``AuthenticationForm`` pada ``views.py`` . Kemudian, menambahkan fungsi ``login_user``, membuat berkas ``login.html`` untuk membuat template laman untuk login dan melakukan url path untuk laman tersebut.
+
+- Saya lanjut dengan membuat fungsi logout dengan import ``logout`` pada ``views.py`` dan menambahkan fungsi ``view.py`` untuk melakukan mekanisme logout. Kemudian, saya memodifikasi berkas ``main.html`` untuk menambahkan hyperlink tag untuk logout. Lalu, saya menambahkan path url di url patterns untuk logout.
+
+- Setelah berhasil membuat form dan fungsi register, login, dan logout, saya lanjut merestriksi akses halaman main dengan import ``login_required``. Saya juga menaruh ``@login_required(login_url='/login')`` agar halaman main hanya dapat diakses oleh pengguna yang sudah login.
+
+Kemudian, saya lanjut setup agar bisa melihat data dari cookies. Hal ini dilakukan dengan menambahkan import ``HttpResponseRedirect``, ``reverse``, dan ``datetime`` pada ``views.py``. Saya juga memodifikasi fungsi ``login_user`` pada blok ``if form.is_valid()`` yang berfungsi untuk melakukan login terlebih dahulu, untuk membuat respose, dan membuat cookie last_login menambahkan ke response. Kemudian saya menambahkan variabel ``'last_login': request.COOKIES['last_login']`` pada context agar kita bisa melihat informasi cookie last_login pada web. Kemudian saya memodifikasi fungsi ``logout_user`` untuk menghapus cookie ``last_login`` saat pengguna melakukan logout. Saya kemudian menambahkan potongan kode ``last_login`` pada ``main.html`` untuk menampilkan informasi cookies di aplikasi web saya.
