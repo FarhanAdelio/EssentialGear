@@ -190,6 +190,8 @@ Tidak adanya csrf_token sering dimanfaatkan oleh penyerang. Karena bisa saja ada
 - ## JSON ID:
 ![Screenshot 2024-09-17 at 23 55 40](https://github.com/user-attachments/assets/817f9b40-f14a-483b-8c43-7e751cc71431)
 
+<br>
+
 ## Tugas 4 PBP Farhan Adelio Prayata 2306240162
 
 ## 1. Apa perbedaan antara HttpResponseRedirect() dan redirect()
@@ -222,12 +224,200 @@ Namun, tidak semua cookies aman digunakan. Cookies yang kurang aman digunakan di
 
 - Membuat fungsi dan form registrasi dengan memodifikasi ``views.py`` dan import formulir bawaan dalam aplikasi web. Kemudian menambahkan fungsi ``register``.
 
+```
+from django.forms import ModelForm
+from main.models import GearEntry
+
+class GearEntryForm(ModelForm):
+    class Meta:
+        model = GearEntry
+        fields = ["name", "price", "description","stock","rating"]
+```
+
 - Membuat berkas ``register.html`` untuk menampilkan laman register dan menambahkan path url di ``urlpatterns``
+
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register</title>
+{% endblock meta %}
+
+{% block content %}
+
+<div class="login">
+  <h1>Register</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input type="submit" name="submit" value="Daftar" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+
+{% endblock content %}
+
+```
+<br>
+
+```
+from django.urls import path
+from main.views import show_main, create_gear_entry,show_xml,show_json, show_xml_by_id, show_json_by_id
+from main.views import register
+from main.views import login_user
+from main.views import logout_user
+app_name = 'main'
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+    path('create-gear-entry', create_gear_entry, name='create_gear_entry'),
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+    path('xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<str:id>/', show_json_by_id, name='show_json_by_id'),
+    path('register/', register, name='register'),
+    path('login/', login_user, name='login'),
+    path('logout/', logout_user, name='logout'),
+]
+
+```
+
+
+
 
 - Setelah itu, saya lanjut membuat fungsi login dengan proses yang sama yaitu import fungsi bawaan django yaitu import ``authenticate``, ``login``, dan ``AuthenticationForm`` pada ``views.py`` . Kemudian, menambahkan fungsi ``login_user``, membuat berkas ``login.html`` untuk membuat template laman untuk login dan melakukan url path untuk laman tersebut.
 
+```
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+    else:
+        form = AuthenticationForm(request)
+    context = {'form': form}
+    return render(request, 'login.html', context)
+```
+<br>
+
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+  <h1>Login</h1>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+        <td></td>
+        <td><input class="btn login_btn" type="submit" value="Login" /></td>
+      </tr>
+    </table>
+  </form>
+
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %} Don't have an account yet?
+  <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+{% endblock content %}
+```
+
 - Saya lanjut dengan membuat fungsi logout dengan import ``logout`` pada ``views.py`` dan menambahkan fungsi ``view.py`` untuk melakukan mekanisme logout. Kemudian, saya memodifikasi berkas ``main.html`` untuk menambahkan hyperlink tag untuk logout. Lalu, saya menambahkan path url di url patterns untuk logout.
+
+```
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
 
 - Setelah berhasil membuat form dan fungsi register, login, dan logout, saya lanjut merestriksi akses halaman main dengan import ``login_required``. Saya juga menaruh ``@login_required(login_url='/login')`` agar halaman main hanya dapat diakses oleh pengguna yang sudah login.
 
-Kemudian, saya lanjut setup agar bisa melihat data dari cookies. Hal ini dilakukan dengan menambahkan import ``HttpResponseRedirect``, ``reverse``, dan ``datetime`` pada ``views.py``. Saya juga memodifikasi fungsi ``login_user`` pada blok ``if form.is_valid()`` yang berfungsi untuk melakukan login terlebih dahulu, untuk membuat respose, dan membuat cookie last_login menambahkan ke response. Kemudian saya menambahkan variabel ``'last_login': request.COOKIES['last_login']`` pada context agar kita bisa melihat informasi cookie last_login pada web. Kemudian saya memodifikasi fungsi ``logout_user`` untuk menghapus cookie ``last_login`` saat pengguna melakukan logout. Saya kemudian menambahkan potongan kode ``last_login`` pada ``main.html`` untuk menampilkan informasi cookies di aplikasi web saya.
+```
+@login_required(login_url='/login')
+```
+
+
+
+- Kemudian, saya lanjut setup agar bisa melihat data dari cookies. Hal ini dilakukan dengan menambahkan import ``HttpResponseRedirect``, ``reverse``, dan ``datetime`` pada ``views.py``. Saya juga memodifikasi fungsi ``login_user`` pada blok ``if form.is_valid()`` yang berfungsi untuk melakukan login terlebih dahulu, untuk membuat respose, dan membuat cookie last_login menambahkan ke response. Kemudian saya menambahkan variabel ``'last_login': request.COOKIES['last_login']`` pada context agar kita bisa melihat informasi cookie last_login pada web. Kemudian saya memodifikasi fungsi ``logout_user`` untuk menghapus cookie ``last_login`` saat pengguna melakukan logout. Saya kemudian menambahkan potongan kode ``last_login`` pada ``main.html`` untuk menampilkan informasi cookies di aplikasi web saya.
+
+<br1>
+
+- Untuk menghubungkan Model Product deengan User, saya mulai dengan import User pada models.py Kemudian, pada model Product yang sudah saya buat, saya menambahkan potongan kode seperti user = models.ForeignKey(User, on_delete=models.CASCADE) untuk menghubungkan satu product dengan satu user melalui sebuah relationship, dimana sebuah product pasti terasosiasikan dengan seorang user.
+
+```
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+```
+
+<br1>
+
+- Saya kemudian membuka ```views.py``` dan memodifikasi create_product_entry seperti yang ada pada tutorial. Perubahan ini dilakukan untuk untuk membantu proses penyimpanan objek pada form ke user yang logged in.
+
+```
+{% extends 'base.html' %} 
+{% block content %}
+<h1>Add New Gear Entry</h1>
+
+    <form method="POST">
+    {% csrf_token %}
+    <table>
+      {{ form.as_table }}
+      <tr>
+      <td></td>
+      <td>
+        <input type="submit" value="Add Gear Entry" />
+      </td>
+      </tr>
+    </table>
+    </form>
+
+{% endblock %}
+```
+
+<br1>
+
+- Kemudian saya ubah value product_entries agar aplikasi hanya menambilkan objek Product yang terasosiakan dengan pengguna yang sedang login dan modifikasi pada context yaitu 'name': request.user.username, untuk menampilakn nama user yang sedang logged in
+
+```
+        'name': request.user.username,
+```
+
+- Setelah itu, saya makemigrations dan migratesesuai.
+
+- Terakhir, saya buka ```settings.py``` untuk import os dan mengubah variabel DEBUG menjadi
+
+```PRODUCTION = os.getenv("PRODUCTION", False) DEBUG = not PRODUCTION```
+
+
+
