@@ -3,6 +3,10 @@ from main.views import show_main, create_gear_entry,show_xml,show_json, show_xml
 from main.views import register
 from main.views import login_user
 from main.views import logout_user
+from main.views import edit_gear
+from main.views import delete_gear
+
+
 
 
 
@@ -18,4 +22,7 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
+    path('edit-gear/<uuid:id>', edit_gear, name='edit_gear'),
+    path('delete/<uuid:id>', delete_gear, name='delete_gear'), # sesuaikan dengan nama fungsi yang dibuat
+
 ]

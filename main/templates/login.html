@@ -1,31 +1,73 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block meta %}
 <title>Login</title>
 {% endblock meta %}
 
 {% block content %}
-<div class="login">
-  <h1>Login</h1>
+<div class="min-h-screen flex flex-col items-center justify-center w-screen bg-gradient-to-r from-black via-white to-black py-12 px-4 sm:px-6 lg:px-8 gap-1">
+  {% comment %} <div>
+    <h2 class="mt-10 text-center text-white text-7xl font-serif flex">
+      ESSENTIALGEAR    
+    </h2>
+  </div> {% endcomment %}
+  <img src="{% static "/img/logo.png" %}" alt="" class= "w-90" >
+  <div class="max-w-md w-screen space-y-8 bg-black p-8 rounded-3xl shadow-2xl shadow-white">
+    <div>
+      <h2 class="mt-5 text-center text-white text-3xl font-serif">
+        Welcome Back!
+      </h2>
+    </div>
+    <form class="mt-8 space-y-6" method="POST" action="">
+      {% csrf_token %}
+      <input type="hidden" name="remember" value="true">
+      <div class="rounded-md shadow-sm space-y-4">
+        <div>
+          <label for="username" class="sr-only">Username</label>
+          <input id="username" name="username" type="text" required class="appearance-none block w-full px-4 py-3 border border-amber-100 placeholder-black text-black rounded-md focus:outline-none focus:ring-amber-100 focus:border-amber-100 focus:z-10 sm:text-sm" placeholder="Username">
+        </div>
+        <div>
+          <label for="password" class="sr-only">Password</label>
+          <input id="password" name="password" type="password" required class="appearance-none block w-full px-4 py-3 border border-amber-100 placeholder-black text-black rounded-md focus:outline-none focus:ring-amber-100 focus:border-amber-100 focus:z-10 sm:text-sm" placeholder="Password">
+        </div>
+      </div>
 
-  <form method="POST" action="">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input class="btn login_btn" type="submit" value="Login" /></td>
-      </tr>
-    </table>
-  </form>
+      <div>
+        <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-white hover:bg-amber-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brown-500 transition duration-150 ease-in-out">
+          Sign in
+        </button>
+      </div>
+    </form>
 
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %} Don't have an account yet?
-  <a href="{% url 'main:register' %}">Register Now</a>
+    {% if messages %}
+    <div class="mt-4">
+      {% for message in messages %}
+      {% if message.tags == "success" %}
+            <div class="bg-brown-100 border border-brown-400 text-brown-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ message }}</span>
+            </div>
+        {% elif message.tags == "error" %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ message }}</span>
+            </div>
+        {% else %}
+            <div class="bg-brown-100 border border-brown-400 text-brown-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ message }}</span>
+            </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+      <p class="text-sm text-white">
+        Don't have an account yet?
+        <a href="{% url 'main:register' %}" class="font-medium text-amber-100 hover:text-white transition duration-150 ease-in-out">
+          Register Now
+        </a>
+      </p>
+    </div>
+  </div>
 </div>
 {% endblock content %}

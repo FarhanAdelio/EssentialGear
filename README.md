@@ -419,5 +419,89 @@ def logout_user(request):
 
 ```PRODUCTION = os.getenv("PRODUCTION", False) DEBUG = not PRODUCTION```
 
+<br>
 
+## Tugas 5 PBP Farhan Adelio Prayata 2306240162
 
+## 1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+
+Dalam web developmentm terdapat istilah yang dinamakan CSS specificity. Terdapat beberapa cara untuk mengkalkulasi CSS specificity yaitu menggunakan selektor dan menggunakan decimal number system. Bagi CSS selector, urutan prioritasnya adalah (Prioritas tertinggi-rendah):
+
+- ```!important``` rule. ```!important``` Rule akan mengesampingkan aturan lainnya termasuk inline style.
+- Inline Style (Atribut ```style``) Style yang digunakan langsung pada elemen HTML menggunakana tribut style memiliki prioritas lebih tinggi daripada semua selector CSS.
+- ID Selector (#) ID ini diterapkan pada elemen yang memiliki atribut ```id```
+- Class selector ```(.)```. Class selector merupakan elemen yang memiliki atribut ```class```. Class selector memiliki prioritas yang lebih tinggi daripada selector elemen
+- Element Type Selector: Elemen ini mengacu pada tag HTML seperti ```div```, ```p```, ```h1```, dan lain lain.
+- Universal Selector ```(*)```
+- Pseudo-Class Selector ```(:)```. Selector ini diaplikasikan pada elemen dalam kondisi spesifik seperti ```:hover```, ```:active``` , ```:nth-child()```
+- Attribute Selector ```([])``` Selector ini berdasarkan atribut elemen HTML, seperti ```[type="text"]``` atau ```[href]```
+
+## 2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design!
+
+Design yang responsive telah menjadi konsep yang penting dalam pengembangan aplikasi web karena alasan - alasan berikut:
+
+- User Experience yang Baik. User experience yang baik sangat penting, terutama jika aplikasi web digunakan sebagai alat pemasaran. Dengan desain yang responsif dan tampilan yang optimal di setiap perangkat, pengalaman brand akan meningkat, yang pada akhirnya meningkatkan reputasi dan daya tarik.
+- Low Maintenance. Dulu, kita harus membuat versi berbeda untuk setiap perangkat. Dengan desain responsif, satu situs dapat menyesuaikan tampilannya di semua perangkat, sehingga lebih mudah dikelola.
+- Loading time yang lebih cepat. 53% pengguna meninggalkan situs jika memuat lebih dari tiga detik. Desain responsif hanya memuat sumber daya yang diperlukan, membuat situs lebih cepat tanpa perlu pengalihan ke versi lain.
+- Beragamnya devices di masa kini. Zaman sekarang, aplikasi web sering di akses dari berbagai perangkat mulai dari handphone, laptop, tv, dan lain - lain. Oleh karena itu, design aplikasi web yang responsive menjadi sangat penting agar pengguna menjadi lebih nyaman dalam mengakses suatu aplikasi web.
+<br>
+- Contoh aplikasi yang SUDA menerapkan responsive design: Shopee
+- Contoh aplikasi yang BELUM menerapkan responsive design: SIAKng
+
+## 3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+
+Berikut adalah penjelasan dan contohnya masing - masing:
+
+- Padding
+Padding adalah ruang kosong yang berada di antara konten elemen dan batas (border) elemen tersebut. Padding memberikan jarak internal sehingga konten tidak langsung menempel pada border atau tepi elemen.
+
+```
+div {
+    padding: 20px; /* Memberikan ruang padding 20px di semua sisi */
+    padding-top: 10px; /* Hanya memberikan padding di atas */
+    padding-right: 15px; /* Hanya memberikan padding di kanan */
+    padding-bottom: 10px; /* Hanya memberikan padding di bawah */
+    padding-left: 15px; /* Hanya memberikan padding di kiri */
+}
+```
+
+- Border
+Border adalah garis pembatas yang mengelilingi elemen. Border dapat diatur ketebalan, jenis garis (seperti solid, dashed, dotted), dan warnanya. Border membantu dalam membedakan atau menonjolkan elemen pada halaman web.
+
+```
+div {
+    border: 2px solid black; /* Membuat border setebal 2px, jenis solid, dan berwarna hitam */
+    border-top: 3px dashed red; /* Membuat border bagian atas setebal 3px dengan garis putus-putus berwarna merah */
+}
+
+```
+
+- Margin
+Margin adalah ruang luar yang mengelilingi elemen, digunakan untuk mengatur jarak antara elemen satu dengan elemen lainnya. Margin membantu dalam mengatur tata letak agar elemen tidak terlalu berdekatan.
+
+```
+div {
+    margin: 20px; /* Memberikan margin 20px di semua sisi */
+    margin-top: 10px; /* Hanya memberikan margin di atas */
+    margin-right: 15px; /* Hanya memberikan margin di kanan */
+    margin-bottom: 10px; /* Hanya memberikan margin di bawah */
+    margin-left: 15px; /* Hanya memberikan margin di kiri */
+}
+```
+
+## 4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+- CSS Flexbox adalah tata letak satu dimensi. Ini berguna untuk mengalokasikan dan menyelaraskan ruang di antara item dalam sebuah grid container. Flexbox bekerja dengan berbagai jenis perangkat tampilan dan ukuran layar. Tata letak Flex memudahkan desain dan pembuatan halaman web responsif tanpa menggunakan banyak properti float dan position dalam kode CSS.
+<br1>
+Sedangkan, CSS Grid Layout adalah sistem tata letak berbasis grid dua dimensi dengan baris dan kolom. Ini berguna untuk membuat tata letak yang lebih kompleks dan terorganisir.
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+- Awalnya, saya menambahkan Tailwind ke dalam aplikasi dengan mengedit file `base.html`, termasuk menambahkan tag `<meta name="viewport">` dan `<script src="https://cdn.tailwindcss.com">`.
+- Selanjutnya, saya menambahkan fitur untuk mengedit produk. Saya memulai dengan mengubah `views.py` dan membuat fungsi `edit_product` yang menerima `request` dan `id` sebagai parameter. Saya juga menambahkan import `reverse` dan `HttpResponseRedirect`.
+- Kemudian, saya membuat file `edit_product.html` untuk memungkinkan pengguna mengubah data produk. Desainnya mirip dengan `create_product_entry.html`. Saya juga menambahkan jalur URL baru dalam `urls.py`.
+- Saya juga membuat navbar dengan latar belakang putih dalam file `navbar.html`, yang berisi tautan ke halaman seperti "Home, Description, Categories", ucapan selamat datang dengan nama pengguna, dan tombol logout.
+- Setelah itu, saya menambahkan fitur navigasi, edit, dan hapus produk. Untuk menangani berkas statis, saya mengonfigurasi `settings.py` dengan menambahkan `whitenoise.middleware.WhiteNoiseMiddleware` di MIDDLEWARE, serta mengatur `STATIC_ROOT`, `STATICFILES_DIRS`, dan `STATIC_URL`.
+- Saya juga menambahkan file `global.css` di folder static/css untuk menerapkan desain khusus, dan menghubungkannya dengan `base.html` agar digunakan di seluruh aplikasi.
+- Kemudian, saya memperbarui tampilan pada file `login.html`, `register.html`, dan `create_product_entry` dengan menggunakan Tailwind. Pada halaman login, saya menampilkan gambar statis bernama `login-photo.png` di samping kolom login.
+- Saya juga membuat file `card_gear.html`, yang menampilkan kartu produk baru untuk setiap entri produk, termasuk tombol untuk mengedit dan menghapus produk.
+- Setelah semua berkas HTML selesai, saya akhirnya memodifikasi `main.html` agar dapat mengintegrasikan semua halaman HTML lainnya dengan baik.

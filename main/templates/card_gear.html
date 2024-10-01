@@ -1,0 +1,55 @@
+{% load static %}
+<div class="relative max-w-7xl mx-auto p-6">
+  <!-- Content Section -->
+  <div class="relative bg-white rounded-lg shadow-lg overflow-hidden">
+    
+    <!-- Header -->
+    <div class="relative p-8">
+      <h3 class="text-4xl font-bold mb-4 text-center">{{ gear_entry.gear }}</h3>
+      <p class="text-center text-lg text-gray-400">{{ gear_entry.time }}</p>
+    </div>
+
+    <!-- Image Gallery Section with Larger Image -->
+    <div class="flex justify-center space-x-8 mb-8">
+      <img src="{% static '/img/cardlogo.png' %}" alt="Shopping Cart Icon" class="w-2/5 h-auto shadow-lg shadow-white">
+    </div>
+    
+    <!-- Main Content -->
+    <div class="p-8">
+      <!-- My Gear Section -->
+      <div class="mb-6">
+        <p class="font-bold text-xl mb-2">My Gear</p>
+        <span class="inline-block text-sm font-semibold py-1 px-3 rounded-full bg-brown-200 text-brown-700">{{ gear_entry.name }}</span>
+      </div>
+
+      <!-- Description Section -->
+      <div class="mb-6">
+        <p class="font-bold text-xl mb-2">Description</p>
+        <p class="text-black text-lg">{{ gear_entry.description }}</p>
+      </div>
+
+      <!-- Price Section -->
+      <div class="mb-6">
+        <p class="font-bold text-xl mb-2">Price</p>
+        <span class="inline-block py-1 px-3 rounded-full bg-brown-200 text-brown-700">{{ gear_entry.price }}</span>
+      </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="absolute top-4 right-4 flex space-x-3">
+      <!-- Edit Button -->
+      <a href="{% url 'main:edit_gear' gear_entry.pk %}" class="bg-emerald-700 text-black rounded-full p-3 hover:bg-emerald-500 transition duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M16.862 2.538c.669-.669 1.762-.669 2.431 0l2.169 2.169c.669.669.669 1.762 0 2.431l-11.482 11.48-5.5 1.101a.75.75 0 01-.884-.884l1.102-5.5 11.483-11.481zm-1.122 4.12l-9.462 9.463-.658 3.29 3.29-.659 9.463-9.462-2.633-2.632zm2.21-2.21l-1.097 1.098 2.633 2.632 1.098-1.098-2.634-2.632z" />
+        </svg>
+      </a>
+      
+      <!-- Delete Button -->
+      <a href="{% url 'main:delete_gear' gear_entry.pk %}" class="bg-red-700 text-white rounded-full p-3 hover:bg-red-500 transition duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.25 4.5A.75.75 0 016 3.75h12a.75.75 0 010 1.5h-.419l-.579 10.39A3.75 3.75 0 0113.256 19.5h-2.512a3.75 3.75 0 01-3.746-3.86L5.419 4.5H5.25zm3.614 11.898A2.25 2.25 0 0010.744 18h2.512a2.25 2.25 0 002.25-2.32l.575-10.18H8.289l.575 10.18zM9 9.75a.75.75 0 011.5 0v6a.75.75 0 01-1.5 0v-6zm4.5-.75a.75.75 0 00-.75.75v6a.75.75 0 001.5 0v-6a.75.75 0 00-.75-.75z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
