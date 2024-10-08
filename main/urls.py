@@ -5,6 +5,8 @@ from main.views import login_user
 from main.views import logout_user
 from main.views import edit_gear
 from main.views import delete_gear
+from main.views import add_gear_entry_ajax
+
 
 
 
@@ -24,5 +26,6 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
     path('edit-gear/<uuid:id>', edit_gear, name='edit_gear'),
     path('delete/<uuid:id>', delete_gear, name='delete_gear'), # sesuaikan dengan nama fungsi yang dibuat
+    path('create-gear-entry-ajax', add_gear_entry_ajax, name='add_gear_entry_ajax'),
 
 ]

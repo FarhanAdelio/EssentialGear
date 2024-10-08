@@ -190,7 +190,7 @@ Tidak adanya csrf_token sering dimanfaatkan oleh penyerang. Karena bisa saja ada
 - ## JSON ID:
 ![Screenshot 2024-09-17 at 23 55 40](https://github.com/user-attachments/assets/817f9b40-f14a-483b-8c43-7e751cc71431)
 
-<br>
+---
 
 ## Tugas 4 PBP Farhan Adelio Prayata 2306240162
 
@@ -419,7 +419,7 @@ def logout_user(request):
 
 ```PRODUCTION = os.getenv("PRODUCTION", False) DEBUG = not PRODUCTION```
 
-<br>
+---
 
 ## Tugas 5 PBP Farhan Adelio Prayata 2306240162
 
@@ -505,3 +505,265 @@ Sedangkan, CSS Grid Layout adalah sistem tata letak berbasis grid dua dimensi de
 - Kemudian, saya memperbarui tampilan pada file `login.html`, `register.html`, dan `create_product_entry` dengan menggunakan Tailwind. Pada halaman login, saya menampilkan gambar statis bernama `login-photo.png` di samping kolom login.
 - Saya juga membuat file `card_gear.html`, yang menampilkan kartu produk baru untuk setiap entri produk, termasuk tombol untuk mengedit dan menghapus produk.
 - Setelah semua berkas HTML selesai, saya akhirnya memodifikasi `main.html` agar dapat mengintegrasikan semua halaman HTML lainnya dengan baik.
+
+## Tugas 6: JavaScript dan AJAX
+
+## 1. Jelaskan manfaat dari penggunaan JavaScript dalam pengembangan aplikasi web! 
+
+- JavaScript membantu programmer web untuk menambahkan interaksi user dengan web dimana JavaScript sebagai bahasa pemrograman tentunya menyediakan fitur untuk membuat logika yang dapat dibuat sebagai fungsi yang mengatur jalannya interaksi antara user dengan web application. Tanpa adanya JavaScript, programmer web akan sulit untuk membuat fitur interaksi dengan web application karena HTML dan CSS tidak mempunyai fitur logika pemrograman yang dapat diimplementasi ke dalam web application sebagai fitur interaksi.
+
+## 2. Jelaskan fungsi dari penggunaan ```await ``` ketika kita menggunakan ```fetch()```! Apa yang akan terjadi jika kita tidak menggunakan ```await`` ?
+
+- Penggunaan dari ```await``` adalah agar fungsi ```fetch()``` dijalankan sebagai fungsi asinkronus dimana fungsi ```fetch()``` dijalankan tanpa menunggu adanya response dari endpoint yang kita passing sebagai argument dalam fungsi ```fetch()```. Hal ini memungkinkan programmer untuk menjalankan beberapa proses dalam suatu waktu tanpa harus menunggu fungsi fetch() me-return data dari endpoint. Fungsi ```fetch()``` dengan ```await``` akan me-return sebuah object ```Promise``` yang akan berubah menjadi object data ```JSON``` saat fungsi ```fetch()``` menerima response dari web application (endpoint).
+
+
+## 3. Mengapa kita perlu menggunakan decorator ```csrf_exempt``` pada ```view``` yang akan digunakan untuk AJAX ```POST```? 
+
+- Untuk exclude ```view``` dari pengecekan ```csrf token```, karena saat kita menggunakan AJAX ```POST``` kita tidak bisa memasukkan input ```csrf token``` yang otomatis ter-generate oleh sistem backend dari django karena kita melakukan fetch tidak dari sistem django. Sehingga kita perlu meng-exclude ```view``` tersebut.
+
+## 4. Pada tutorial PBP minggu ini, pembersihan data input pengguna dilakukan di belakang (backend) juga. Mengapa hal tersebut tidak dilakukan di frontend saja?
+
+- Untuk mencegah masuknya data yang dapat mengganggu sistem baik sistem backend maupun frontend. Karena saat kita membersihkan data input pada backend kitaa memastikan bahwa data input tersebut sudah tidak mengandung data yang menyebabkan gangguan pada sistem sebelum kita memasukkan data tersebut ke database dari web application yang kita miliki.
+
+
+## 5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+- ```AJAX GET```
+ Ubahlah kode cards data product agar dapat mendukung AJAX GET. Lakukan pengambilan data product menggunakan AJAX GET. Pastikan bahwa data yang diambil hanyalah data milik pengguna yang logged-in.
+ <br>
+
+  - Untuk mendapatkan data dari product dalam database kita perlu untuk membuat fungsi untuk mengambil data dari url API yang kita punya. untuk mendapatkan url API kita perlu membuat fungsi pada ```views.py``` yang berguna untuk mereturn response dalam bentuk JSON yang berisikan data product pada database sesuai keinginan kita yaitu product yang dimiliki oleh sebueh user. Setelah itu kita perlu mendefinisikan url yang sesuai sebagai url API yang nantinya kita panggil untuk mendapatkan data dari database.
+
+  ```
+  def show_json(request):
+  data = Product.objects.filter(user=request.user) # memilih data yang dimiliki oleh user
+  return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+  ```
+
+   - Membuat fungsi untuk mendapatkan data dari database melalui url API yang telah kita definisikan sebelumnya. Hal ini dapat dilakukan dengan membuat fungsi berikut ini pada tag script dalam main.html. Kita menggunakan fungsi async agar kita tidak perlu menunggu response dari url API untuk melanjutkan program yang lain (asinkronus/non-blocking).
+
+```
+   async function getProducts(){
+    return fetch("{% url 'main:show_json' %}").then((res) => res.json());
+}
+```
+
+   - Untuk membuat cards yang nantinya dapat membuat data yang kita dapatkan menggunakan AJAX GET kita perlu mengubah yang sebelumnya kita menggunakan card_product.html sekarang kita memerlukan javascript untuk menghandle tampilan dari card product. Hal tersebut dapat kita buat dengan memasukkan kode yang kita miliki di dalam card_product.html ke dalam sebuah fungsi yaitu refreshProduct()
+
+```
+async function refreshGearEntries() {
+    document.getElementById("gear_entry_cards").innerHTML = "";
+    document.getElementById("gear_entry_cards").className = "";
+    const gearEntries = await getGearEntries();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (gearEntries.length === 0) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                <img src="{% static 'img/empty-cart.png' %}" alt="empty" class="w-32 h-32 mb-4"/>
+                <p class="text-center text-gray-600 mt-4">Belum ada data gear pada EssentialGear.</p>
+            </div>
+        `;
+    }
+    else {
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+        gearEntries.forEach((item) => {
+            const name = DOMPurify.sanitize(item.fields.name);
+            const description = DOMPurify.sanitize(item.fields.description);
+            htmlString += `
+            <div class="relative max-w-7xl mx-auto p-6">
+              <!-- Content Section -->
+              <div class="relative bg-white rounded-lg shadow-lg overflow-hidden">
+                
+                <!-- Header -->
+                <div class="relative p-8">
+                  <h3 class="text-4xl font-bold mb-4 text-center">${name}</h3>
+                </div>
+
+                <!-- Image Gallery Section with Larger Image -->
+                <div class="flex justify-center space-x-8 mb-8">
+                  <img src="{% static '/img/cardlogo.png' %}" alt="Shopping Cart Icon" class="w-2/5 h-auto shadow-lg shadow-white">
+                </div>
+                
+                <!-- Main Content -->
+                <div class="p-8">
+                  <!-- My Gear Section -->
+                  <div class="mb-6">
+                    <p class="font-bold text-xl mb-2">My Gear</p>
+                    <span class="inline-block text-sm font-semibold py-1 px-3 rounded-full bg-brown-200 text-brown-700">${name}</span>
+                  </div>
+
+                  <!-- Description Section -->
+                  <div class="mb-6">
+                    <p class="font-bold text-xl mb-2">Description</p>
+                    <p class="text-black text-lg">${description}</p>
+                  </div>
+
+                  <!-- Price Section -->
+                  <div class="mb-6">
+                    <p class="font-bold text-xl mb-2">Price</p>
+                    <span class="inline-block py-1 px-3 rounded-full bg-brown-200 text-brown-700">${item.fields.price}</span>
+                  </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="absolute top-4 right-4 flex space-x-3">
+                  <!-- Edit Button -->
+                  <a href="edit-gear/${item.pk}" class="bg-emerald-700 text-black rounded-full p-3 hover:bg-emerald-500 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M16.862 2.538c.669-.669 1.762-.669 2.431 0l2.169 2.169c.669.669.669 1.762 0 2.431l-11.482 11.48-5.5 1.101a.75.75 0 01-.884-.884l1.102-5.5 11.483-11.481zm-1.122 4.12l-9.462 9.463-.658 3.29 3.29-.659 9.463-9.462-2.633-2.632zm2.21-2.21l-1.097 1.098 2.633 2.632 1.098-1.098-2.634-2.632z" />
+                    </svg>
+                  </a>
+                  
+                  <!-- Delete Button -->
+                  <a href="delete/${item.pk}" class="bg-red-700 text-white rounded-full p-3 hover:bg-red-500 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.25 4.5A.75.75 0 016 3.75h12a.75.75 0 010 1.5h-.419l-.579 10.39A3.75 3.75 0 0113.256 19.5h-2.512a3.75 3.75 0 01-3.746-3.86L5.419 4.5H5.25zm3.614 11.898A2.25 2.25 0 0010.744 18h2.512a2.25 2.25 0 002.25-2.32l.575-10.18H8.289l.575 10.18zM9 9.75a.75.75 0 011.5 0v6a.75.75 0 01-1.5 0v-6zm4.5-.75a.75.75 0 00-.75.75v6a.75.75 0 001.5 0v-6a.75.75 0 00-.75-.75z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            `;
+        });
+    }
+    document.getElementById("gear_entry_cards").className = classNameString;
+    document.getElementById("gear_entry_cards").innerHTML = htmlString;
+}
+```
+
+- ``AJAX POST``
+  - Buatlah sebuah tombol yang membuka sebuah modal dengan form untuk menambahkan product.
+  
+  - Membuat button pada main.html dengan menambahkan prop onclick yang berisikan "showModal();". Nantinya fungsi showModal() akan berisikan.
+
+```
+function showModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+      modal.classList.remove('hidden'); 
+
+```
+
+  - Nantinya element dengan id crudModal akan berisikan modal yang ada kita tampilkan yaitu seperti dibawah ini.
+
+```
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+    <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+    <!-- Modal header -->
+      <div class="flex items-center justify-between p-4 border-b rounded-t">
+        <h3 class="text-xl font-semibold text-gray-900">
+          Add New Gear Entry
+        </h3>
+        <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+          <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <div class="px-6 py-4 space-y-6 form-style">
+        <form id="gearEntryForm">
+          <div class="mb-4">
+            <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-black" placeholder="Enter your Gear" required>
+          </div>
+          <div class="mb-4">
+            <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+            <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-black" placeholder="price" required>
+          </div>
+          <div class="mb-4">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-black" placeholder="description" required></textarea>
+          </div>
+          <div class="mb-4">
+            <label for="stock" class="block text-sm font-medium text-gray-700">Gear stock</label>
+            <input type="number" id="stock" name="stock" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-black" required>
+          </div>
+          <div class="mb-4">
+            <label for="rating" class="block text-sm font-medium text-gray-700">Gear rating (1-10)</label>
+            <input type="number" id="rating" name="rating" min="1" max="10" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-black" required>
+          </div>
+          <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+            <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+            <button type="submit" id="submitGearEntry" form="gearEntryForm" class="bg-black hover:bg-slate-500 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+```
+
+- Buatlah fungsi view baru untuk menambahkan product baru ke dalam basis data. Buatlah path /create-ajax/ yang mengarah ke fungsi view yang baru kamu buat.
+
+  - Membuat fungsi pada views.py pada folder main yang berisikan.
+
+```
+@csrf_exempt
+@require_POST
+def add_gear_entry_ajax(request):
+    name = strip_tags(request.POST.get("name")) # strip HTML tags!
+    price = strip_tags(request.POST.get("price")) # strip HTML tags!
+    description = request.POST.get("description")
+    stock = request.POST.get("stock")
+    rating = request.POST.get("rating")
+    user = request.user
+
+
+    new_gear = GearEntry(
+            name=name, 
+            price = price,
+            description=description,
+            stock=stock,
+            rating=rating,
+            user = request.user
+    )
+
+    new_gear.save()
+
+    return HttpResponse(b"CREATED", status=201)
+```
+
+  - Mendefinisikan url pada urls.py dengan menambahkan block kode berikut pada urlpatterns
+
+```
+urlpatterns=[
+    ...,
+    path('create-ajax', create_product_with_ajax, name='create_product_with_ajax'),
+]
+```
+
+- Hubungkan form yang telah kamu buat di dalam modal kamu ke path /create-ajax/. Untuk menghubungkan form yang telah dibuat pada modal kita perlu menambahkan fungsi javascript yang digunakan untuk melakukan POST ke dalam server lalu memanggil fungsi refreshProduct() setelah fetch berhasil dilakukan. Nantinya kita perlu menambahkan event listener ke dalam productForm yaitu saat button submit ditekan. Hal ini dapat dilakukan dengan menambahkan fungsi dibawah ini pada tag script di file main.html.
+
+```
+function addGearEntry() {
+    fetch("{% url 'main:add_gear_entry_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#gearEntryForm')),
+    })
+    .then(response => refreshGearEntries());
+
+    document.getElementById("gearEntryForm").reset(); 
+    document.querySelector("[data-modal-toggle='crudModal']").click();
+
+    return false;
+  }
+
+  document.getElementById("gearEntryForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addGearEntry();
+  })
+  ```
+
+- Lakukan refresh pada halaman utama secara asinkronus untuk menampilkan daftar product terbaru tanpa reload halaman utama secara keseluruhan. Kita dapat menambahkan kode dibawah ini untuk membuat fungsi yang berguna untuk merefresh tampilan dari halaman utama
+
+- kita juga perlu memanggil fungsi refreshProduct() setelah kita melakukan submit form product dengan menambahkan
+
+```
+fetch("{% url 'main:add_gear_entry_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#gearEntryForm')),
+    })
+    .then(response => refreshGearEntries());
+```

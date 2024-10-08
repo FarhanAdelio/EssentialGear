@@ -14,17 +14,19 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
+
 
 
 @login_required(login_url='/login')
 def show_main(request):
-    gear_entries = GearEntry.objects.filter(user=request.user)
 
     context = {
         'name': request.user.username,
         'npm' : '2306240162',
         'class': 'PBP C',
-        'gear_entries': gear_entries,
         'last_login': request.COOKIES['last_login'],
     }
     return render(request, "main.html", context)
@@ -42,11 +44,11 @@ def create_gear_entry(request):
     return render(request, "create_gear_entry.html", context)
 
 def show_xml(request):
-    data = GearEntry.objects.all()
+    data = GearEntry.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
 
 def show_json(request):
-    data = GearEntry.objects.all()
+    data = GearEntry.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
@@ -70,6 +72,7 @@ def register(request):
     return render(request, 'register.html', context)
 
 def login_user(request):
+    form = AuthenticationForm()
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
 
@@ -80,7 +83,7 @@ def login_user(request):
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
     else:
-        form = AuthenticationForm(request)
+        messages.error(request, "Invalid username or password. Please try again.")
     context = {'form': form}
     return render(request, 'login.html', context)
 
@@ -104,3 +107,32 @@ def delete_gear(request, id):
     gear = GearEntry.objects.get(pk = id)
     gear.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+# {% comment %} name = models.CharField(max_length=255)
+#     price = models.IntegerField()
+#     description = models.TextField(max_length=300)
+#     stock = models.IntegerField()
+#     rating = models.IntegerField() {% endcomment %}
+@csrf_exempt
+@require_POST
+def add_gear_entry_ajax(request):
+    name = strip_tags(request.POST.get("name")) # strip HTML tags!
+    price = strip_tags(request.POST.get("price")) # strip HTML tags!
+    description = request.POST.get("description")
+    stock = request.POST.get("stock")
+    rating = request.POST.get("rating")
+    user = request.user
+
+
+    new_gear = GearEntry(
+            name=name, 
+            price = price,
+            description=description,
+            stock=stock,
+            rating=rating,
+            user = request.user
+    )
+
+    new_gear.save()
+
+    return HttpResponse(b"CREATED", status=201)
