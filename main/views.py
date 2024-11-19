@@ -17,7 +17,9 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
-
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 
 
 @login_required(login_url='/login')
@@ -136,3 +138,31 @@ def add_gear_entry_ajax(request):
     new_gear.save()
 
     return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+def create_gear_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse the JSON body
+            data = json.loads(request.body)
+            
+            # Create a new Product object
+            new_gear = create_gear_flutter(
+                user=request.user,  # Ensure the user is authenticated
+                name=data["name"],
+                price=int(data["price"]),
+                description=data["description"],
+                stock=data["stock"],
+                rating=data["rating"],
+            )
+            
+            # Save the product object
+            new_gear.save()
+
+            return JsonResponse({"status": "success"}, status=200)
+        except KeyError as e:
+            return JsonResponse({"status": "error", "message": f"Missing field: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=405)
